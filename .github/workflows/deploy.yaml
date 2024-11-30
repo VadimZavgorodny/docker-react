@@ -9,10 +9,23 @@ jobs:
     runs-on: ubuntu-latest
     environment: docker-react
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      # Debugging to confirm secrets (ensure sensitive values are NOT exposed in logs)
-      - run: echo "US ${{ vars.DOCKERHUB_USERNAME }} PS ${{ vars.DOCKERHUB_PASSWORD }}"
       - run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-      - run: docker build -t VadimZavgorodny/docker-react -f Dockerfile.dev .
-      - run: docker run -e CI=true VadimZavgorodny/docker-react npm test
+      - run: docker build -t VadimZavgorodny/react-test -f Dockerfile.dev .
+      - run: docker run -e CI=true VadimZavgorodny/react-test npm test
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*'
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: frontend
+          environment_name: Frontend-env
+          existing_bucket_name: elasticbeanstalk-us-east-1-745913410086
+          region: us-east-1
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip
