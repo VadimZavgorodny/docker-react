@@ -13,12 +13,6 @@ jobs:
 
       # Debugging to confirm secrets (ensure sensitive values are NOT exposed in logs)
       - run: echo "${{ vars.DOCKERHUB_USERNAME }} ${{ vars.DOCKERHUB_PASSWORD }}"
-
-      # Docker login using the correct syntax with --password-stdin
-      - run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}"
-
-      # Build Docker image
+      - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - run: docker build -t cygnetops/react-test -f Dockerfile.dev .
-
-      # Run tests in Docker
       - run: docker run -e CI=true cygnetops/react-test npm test
