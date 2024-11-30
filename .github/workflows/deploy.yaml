@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v2
 
       # Debugging to confirm secrets (ensure sensitive values are NOT exposed in logs)
-      - run: echo "${{ variables.DOCKERHUB_USERNAME }} ${{ variables.DOCKERHUB_PASSWORD }}"
+      - run: echo "${{ vars.DOCKERHUB_USERNAME }} ${{ vars.DOCKERHUB_PASSWORD }}"
 
       # Docker login using the correct syntax with --password-stdin
       - run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
