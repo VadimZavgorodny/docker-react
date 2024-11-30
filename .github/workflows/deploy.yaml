@@ -15,7 +15,7 @@ jobs:
       - run: echo "${{ vars.DOCKERHUB_USERNAME }} ${{ vars.DOCKERHUB_PASSWORD }}"
 
       # Docker login using the correct syntax with --password-stdin
-      - run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+      - run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}"
 
       # Build Docker image
       - run: docker build -t cygnetops/react-test -f Dockerfile.dev .
