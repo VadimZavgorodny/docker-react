@@ -10,6 +10,15 @@ jobs:
     environment: docker-react
     steps:
       - uses: actions/checkout@v2
-      - run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }}
+
+      # Debugging to confirm secrets (ensure sensitive values are NOT exposed in logs)
+      - run: echo "${{ secrets.DOCKERHUB_USERNAME }} ${{ secrets.DOCKERHUB_PASSWORD }}"
+
+      # Docker login using the correct syntax with --password-stdin
+      - run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      # Build Docker image
       - run: docker build -t cygnetops/react-test -f Dockerfile.dev .
+
+      # Run tests in Docker
       - run: docker run -e CI=true cygnetops/react-test npm test
